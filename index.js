@@ -1,11 +1,15 @@
-const axios = require('axios');
+const express = require('express');
+const routes = require('./src/routes/routes');
 
-exports.getDataFromAPI = async (req, res) => {
-  try {
-    const response = await axios.get('https://api.example.com/data');
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching data from 3rd party API:', error);
-    res.status(500).send('Error fetching data');
-  }
-};
+require('dotenv').config();
+
+const app = express();
+const port = 3000;
+
+// Use the routes defined in routes.js
+app.use('/', routes);
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

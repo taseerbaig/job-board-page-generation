@@ -1,60 +1,21 @@
-const express = require('express');
 const axios = require('axios');
+const constants = require("../utils/constants");
 
-const app = express();
-app.use(express.json());
-
-// GET request to fetch all items
-app.get('/items', async (req, res) => {
+exports.getDataFromAPI = async (req, res) => {
   try {
-    const response = await axios.get('https://api.example.com/items');
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch items' });
-  }
-});
+    console.info ('Fetching data from 3rd party API');
 
-// GET request to fetch a single item by ID
-app.get('/items/:id', async (req, res) => {
-  try {
-    const response = await axios.get(`https://api.example.com/items/${req.params.id}`);
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch item' });
-  }
-});
+    const { API_URL } = constants;
+    console.info ({API_URL});
 
-// POST request to create a new item
-app.post('/items', async (req, res) => {
-  try {
-    const response = await axios.post('https://api.example.com/items', req.body);
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create item' });
-  }
-});
+    const jobs = await axios.get(`http://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=524ca37a&app_key=18341cc2dace58d47cf4448b443c7948&results_per_page=20&what=javascript%20developer&content-type=application/json`, { timeout: 10000 });
 
-// PUT request to update an existing item by ID
-app.put('/items/:id', async (req, res) => {
-  try {
-    const response = await axios.put(`https://api.example.com/items/${req.params.id}`, req.body);
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update item' });
-  }
-});
+    console.info ({jobs: jobs.data});
 
-// DELETE request to delete an item by ID
-app.delete('/items/:id', async (req, res) => {
-  try {
-    const response = await axios.delete(`https://api.example.com/items/${req.params.id}`);
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete item' });
-  }
-});
+    return res.status(200).send(jobs);
 
-// Start the server
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
+  } catch (error) {
+    console.error('Error fetching data from 3rd party API:', error);
+    res.status(500).send('Error fetching data');
+  }
+};
