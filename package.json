@@ -1,0 +1,15 @@
+{
+  "name": "job-board-page-generation",
+  "version": "1.0.0",
+  "description": "Job Listings ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Taseer",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.5",
+    "express": "^4.19.2"
+  }
+}
