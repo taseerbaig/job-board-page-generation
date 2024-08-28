@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search and find the latest job listings in various locations. Discover top job opportunities for Javascript developers and more.">
+    <meta name="keywords" content="job search, job listings, Javascript developer jobs, London jobs, job opportunities, career search">
+    <meta name="author" content="Job Board">
+    <meta property="og:title" content="Job Search | Job Board">
+    <meta property="og:description" content="Find the latest job listings and top job opportunities in various locations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com">
+    <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Job Search | Job Board">
+    <meta name="twitter:description" content="Discover top job opportunities for Javascript developers in London and more.">
+    <meta name="twitter:image" content="https://yourwebsite.com/images/twitter-image.jpg">
+    <title>Job Search | Javascript Developer Jobs in London | Job Board</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2em;
+            margin: 0;
+        }
+        main {
+            padding: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 40%;
+            max-width: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .job-listing {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .job-listing h2 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+        .job-listing p {
+            margin: 5px 0;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebPage",
+      "name": "Job Search",
+      "description": "Find the latest job listings and top job opportunities in various locations.",
+      "url": "https://yourwebsite.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://yourwebsite.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <header>
+        <h1>Find Your Next Job</h1>
+        <p>Search for the latest job opportunities in your area.</p>
+    </header>
+
+    <main>
+        <h2>Search for Jobs</h2>
+        <form id="job-search-form">
+            <input type="text" id="job-type" placeholder="Job Type (e.g., Javascript Developer)" required aria-label="Job Type">
+            <input type="text" id="location" placeholder="Location (e.g., London)" required aria-label="Location">
+            <button type="submit">Search</button>
+        </form>
+
+        <div id="jobs-container" aria-live="polite">
+            <!-- Job listings will be displayed here -->
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Job Board. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Function to fetch and display jobs
+        async function fetchJobs(jobType, location) {
+            try {
+                const finalURL = `https://job-board-page-generation-production.up.railway.app/api/data?limit=40&jobType=${encodeURIComponent(jobType)}&location=${encodeURIComponent(location)}`;
+                console.log('Fetching jobs from:', finalURL);
+                const response = await fetch(finalURL);
+                
+                if (!response.ok) {
+                    console.log(response);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const jobs = await response.json();
+                const jobsContainer = document.getElementById('jobs-container');
+                jobsContainer.innerHTML = ''; // Clear any existing content
+
+                if (jobs.jobListings && jobs.jobListings.length > 0) {
+                    console.log('Jobs found:', jobs);
+                    jobs.jobListings.forEach(job => {
+                        console.log(job);
+                        const jobElement = document.createElement('div');
+                        jobElement.className = 'job-listing';
+                        jobElement.innerHTML = `
+                            <h2>${job.title}</h2>
+                            <p><strong>Company:</strong> ${job.company}</p>
+                            <p><strong>Location:</strong> ${job.location}</p>
+                            <p>${job.description}</p>
+                        `;
+                        jobsContainer.appendChild(jobElement);
+                    });
+                } else {
+                    jobsContainer.innerHTML = '<p>No jobs found.</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching jobs:', error);
+                const jobsContainer = document.getElementById('jobs-container');
+                jobsContainer.innerHTML = '<p>There was an error fetching the job listings. Please try again later.</p>';
+            }
+        }
+
+        // Event listener for the form submission
+        document.getElementById('job-search-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from submitting the traditional way
+
+            const jobType = document.getElementById('job-type').value;
+            const location = document.getElementById('location').value;
+
+            fetchJobs(jobType, location); // Fetch jobs based on user input
+        });
+    </script>
+
+</body>
+</html>
