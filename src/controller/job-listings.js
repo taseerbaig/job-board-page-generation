@@ -6,9 +6,23 @@ const getDataFromAPI = async (req, res) => {
     console.info('Fetching data from 3rd party API');
 
     const { API_URL } = constants;
-    console.info({ API_URL });
+    const {
+      limit,
+      page,
+      jobType,
+      location
+    } = req.query;
 
-    const jobsResponse = await fetch(API_URL, {
+    const params = new URLSearchParams({
+      results_per_page: limit,
+      what: jobType,
+      where: location,
+    });
+
+    const finalURL = `${API_URL}&${params}`;
+    console.info ({finalURL});
+
+    const jobsResponse = await fetch(finalURL, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -16,9 +30,23 @@ const getDataFromAPI = async (req, res) => {
       timeout: 10000 // Adjust this timeout if necessary
     });
 
-    const jobs = await jobsResponse.json();
+    let jobs = await jobsResponse.json();
 
-    return res.status(200).send(jobs);
+    const updatedJobSearch = jobs.results.map((job) => {
+      const updJob = {};
+      updJob.id = job.id;
+      updJob.title = job.title;
+      updJob.company = job.company.display_name;
+      updJob.location = job.location.display_name;
+      updJob.salary = job.salary_min;
+      updJob.posted = job.created;
+      return updJob;
+    });
+
+    return res.status(200).send({
+      totalJobs: jobs.count,
+      jobListings: updatedJobSearch
+    });
 
   } catch (error) {
     console.error({ error });
