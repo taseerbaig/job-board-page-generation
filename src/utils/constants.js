@@ -1,10 +1,11 @@
+import dotenv from 'dotenv';
+
 // Add data from env file
+dotenv.config();
 
-require('dotenv').config();
-
-const { API_KEY, APP_ID} = process.env;
-
-module.exports = {
-  API_URL: `http://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${APP_ID}&app_key=${API_KEY}&results_per_page=20&what=javascript%20developer&content-type=application/json`
+const constants = {
+  API_URL: 'http://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=524ca37a&app_key=18341cc2dace58d47cf4448b443c7948',
+  REQUEST_TIMEOUT: 10000 // 10 seconds
 };
 
+export default constants;

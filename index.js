@@ -1,10 +1,15 @@
-const express = require('express');
-const routes = require('./src/routes/routes');
+import express from 'express';
+import cors from 'cors';
+import routes from './src/routes/routes.js';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
 const app = express();
 const port = 3000;
+
+// Enable CORS for all routes
+app.use(cors());
 
 // Use the routes defined in routes.js
 app.use('/', routes);
